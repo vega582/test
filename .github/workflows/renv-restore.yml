@@ -20,10 +20,6 @@ jobs:
         shell: bash
     name: Publish 🗞
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
-    if: >
-      !contains(github.event.commits[0].message, '[skip deploy]')
     strategy:
       fail-fast: false
       matrix:
@@ -42,6 +38,6 @@ jobs:
           fi
 
       - name: Commit updated renv.lock file
-        if: ${{ steps.set_app_suffix.outputs.APP_SUFFIX == 'main' }}
+        if: ${{ env.APP_SUFFIX == 'main' }}
         run: |
           echo "Yes"
