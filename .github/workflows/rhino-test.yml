@@ -81,4 +81,5 @@ jobs:
         with:
           working-directory: .rhino # Created by earlier commands which use Node.js
           start: npm run run-app
+          wait-on-timeout: 500
           project: ../tests
