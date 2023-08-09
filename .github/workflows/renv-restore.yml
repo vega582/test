@@ -81,7 +81,7 @@ jobs:
         working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
         run: |
           options(renv.config.cache.symlinks = FALSE)
-          renv::restore()
+          renv::restore(clean = TRUE)
           install.packages(renv::dependencies()$Package)
           renv::snapshot(update = TRUE)
 
