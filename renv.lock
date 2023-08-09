@@ -270,6 +270,11 @@
       ],
       "Hash": "b18a9cf3c003977b0cc49d5e76ebe48d"
     },
+    "dplyr": {
+      "Package": "dplyr",
+      "Version": "1.1.2",
+      "Source": "Repository"
+    },
     "ellipsis": {
       "Package": "ellipsis",
       "Version": "0.3.2",
