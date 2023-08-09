@@ -40,3 +40,7 @@ jobs:
         run: |
           options(renv.config.cache.symlinks = FALSE)
           renv::restore(clean = TRUE)
+
+      - name: Print {digest} version
+        shell: Rscript {0}
+        run: print(packageVersion('digest'))
