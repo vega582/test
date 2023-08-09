@@ -40,9 +40,20 @@ jobs:
         run: |
           options(renv.config.cache.symlinks = FALSE)
           renv::restore(clean = TRUE)
-          renv::status()
+          install.packages(
+            renv::dependencies()$Package,
+            repos = c(
+              Pharmaverse = "https://pharmaverse.r-universe.dev",
+              CRAN = "https://cloud.r-project.org"
+            )
+          )
+          renv::snapshot(update = TRUE)
 
       - name: Print {digest} version
         working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
         shell: Rscript {0}
         run: print(packageVersion('digest'))
+
+      - name: Print renv.lock file
+        working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
+        run: cat renv.lock
