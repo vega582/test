@@ -51,103 +51,94 @@ jobs:
           )
           RPROFILE
 
-      - name: Check global profile
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Extract R version from lockfile
+        run: printf 'R_VERSION=%s\n' "$(jq --raw-output .R.Version ${{ github.event.repository.name }}/${{ matrix.directory }}/renv.lock)" >> $GITHUB_ENV
+
+      - name: Check if cypress test exists
+        id: find-cypress
+        run: |
+          if [ -d ${{ github.event.repository.name }}/${{ matrix.directory }}/tests/cypress ]; then
+            echo "has-cypress-tests=true" >> $GITHUB_OUTPUT
+          else
+            echo "Skipping frontend tests because cypress directory does not exist."
+            echo "has-cypress-tests=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Restore renv from cache
+        uses: actions/cache@v2
+        env:
+          CACHE_KEY: renv-${{ runner.arch }}-${{ runner.os }}-${{ env.R_VERSION }}-${{ matrix.directory }}-${{ env.APP_SUFFIX }}
+        with:
+          path: ${{ github.event.repository.name }}/${{ matrix.directory }}/renv/library
+          key: ${{ env.CACHE_KEY }}-${{ hashFiles(format('{0}/{1}/renv.lock', github.event.repository.name, matrix.directory)) }}
+          restore-keys: ${{ env.CACHE_KEY }}-
+
+      - name: Install app dependencies
         shell: Rscript {0}
         working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
         run: |
           options(renv.config.cache.symlinks = FALSE)
           renv::restore()
-          install.packages('teal')
+          install.packages(renv::dependencies()$Package)
           renv::snapshot(update = TRUE)
 
-      # - name: Install jq
-      #   run: sudo apt-get update && sudo apt-get install -y jq
+      - name: Print the new renv.lock file for ${{ matrix.directory }}
+        working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
+        run: cat renv.lock
 
-      # - name: Extract R version from lockfile
-      #   run: printf 'R_VERSION=%s\n' "$(jq --raw-output .R.Version ${{ github.event.repository.name }}/${{ matrix.directory }}/renv.lock)" >> $GITHUB_ENV
+      - name: Commit updated renv.lock file
+        uses: stefanzweifel/git-auto-commit-action@v4
+        continue-on-error: true
+        with:
+          repository: ${{ github.event.repository.name }}
+          branch: deploy-apps@main
+          commit_message: "Update renv.lock file for ${{ matrix.directory }} app"
+          file_pattern: "${{ matrix.directory }}/renv.lock"
+          commit_user_name: github-actions
 
-      # - name: Check if cypress test exists
-      #   id: find-cypress
-      #   run: |
-      #     if [ -d ${{ github.event.repository.name }}/${{ matrix.directory }}/tests/cypress ]; then
-      #       echo "has-cypress-tests=true" >> $GITHUB_OUTPUT
-      #     else
-      #       echo "Skipping frontend tests because cypress directory does not exist."
-      #       echo "has-cypress-tests=false" >> $GITHUB_OUTPUT
-      #     fi
+      - name: Front end test to check if the app works fine
+        if: steps.find-cypress.outputs.has-cypress-tests == 'true'
+        uses: cypress-io/github-action@v2
+        with:
+          working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}/js
+          start: npm run run-app
+          wait-on: "http://localhost:3333"
+          wait-on-timeout: 500
+          project: ../tests
 
-      # - name: Restore renv from cache
-      #   uses: actions/cache@v2
-      #   env:
-      #     CACHE_KEY: renv-${{ runner.arch }}-${{ runner.os }}-${{ env.R_VERSION }}-${{ matrix.directory }}-${{ env.APP_SUFFIX }}
-      #   with:
-      #     path: ${{ github.event.repository.name }}/${{ matrix.directory }}/renv/library
-      #     key: ${{ env.CACHE_KEY }}-${{ hashFiles(format('{0}/{1}/renv.lock', github.event.repository.name, matrix.directory)) }}
-      #     restore-keys: ${{ env.CACHE_KEY }}-
+      - name: Install rsconnect
+        shell: Rscript {0}
+        run: |
+          install.packages('remotes')
+          remotes::install_version("rsconnect", "0.8.29")
 
-      # - name: Install rsconnect
-      #   shell: Rscript {0}
-      #   run: |
-      #     install.packages('remotes')
-      #     remotes::install_version("rsconnect", "0.8.29")
-
-      # - name: Install app dependencies
-      #   shell: Rscript {0}
-      #   working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
-      #   run: |
-      #     options(renv.config.cache.symlinks = FALSE)
-      #     renv::restore()
-      #     install.packages(renv::dependencies()$Package)
-      #     renv::snapshot(update = TRUE)
-
-      # - name: Print the new renv.lock file for ${{ matrix.directory }}
-      #   working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
-      #   run: cat renv.lock
-
-      # - name: Commit updated renv.lock file
-      #   uses: stefanzweifel/git-auto-commit-action@v4
-      #   continue-on-error: true
-      #   with:
-      #     repository: ${{ github.event.repository.name }}
-      #     branch: deploy-apps@main
-      #     commit_message: "Update renv.lock file for ${{ matrix.directory }} app"
-      #     file_pattern: "${{ matrix.directory }}/renv.lock"
-      #     commit_user_name: github-actions
-
-      # - name: Front end test to check if the app works fine
-      #   if: steps.find-cypress.outputs.has-cypress-tests == 'true'
-      #   uses: cypress-io/github-action@v2
-      #   with:
-      #     working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}/js
-      #     start: npm run run-app
-      #     wait-on: "http://localhost:3333"
-      #     wait-on-timeout: 500
-      #     project: ../tests
-
-      # - name: Deploy 🖨 ${{ matrix.directory }} 🎨
-      #   shell: Rscript {0}
-      #   run: |
-      #     options(
-      #       repos = c(
-      #         Pharmaverse = "${{ matrix.repository }}",
-      #         CRAN = "https://cloud.r-project.org",
-      #         BioC = BiocManager::repositories()
-      #       )
-      #     )
-      #     rsconnect::setAccountInfo(
-      #       name = "${{ env.SHINYAPPSIO_ACCOUNT }}",
-      #       token = "${{ secrets.SHINYAPPSIO_TOKEN }}",
-      #       secret = "${{ secrets.SHINYAPPSIO_SECRET }}",
-      #       server = "shinyapps.io"
-      #     )
-      #     rsconnect::deployApp(
-      #       appDir = "./${{ github.event.repository.name }}/${{ matrix.directory }}",
-      #       appFiles = "app.R",
-      #       appName = rsconnect::generateAppName("${{ env.APP_PREFIX }}_${{ matrix.directory }}_${{ env.APP_SUFFIX }}"),
-      #       appTitle = "${{ env.APP_PREFIX }}_${{ matrix.directory }}_${{ env.APP_SUFFIX }}",
-      #       account = "${{ env.SHINYAPPSIO_ACCOUNT }}",
-      #       upload = TRUE,
-      #       logLevel = "normal",
-      #       lint = FALSE,
-      #       forceUpdate = TRUE
-      #     )
+      - name: Deploy 🖨 ${{ matrix.directory }} 🎨
+        shell: Rscript {0}
+        run: |
+          options(
+            repos = c(
+              Pharmaverse = "${{ matrix.repository }}",
+              CRAN = "https://cloud.r-project.org",
+              BioC = BiocManager::repositories()
+            )
+          )
+          rsconnect::setAccountInfo(
+            name = "${{ env.SHINYAPPSIO_ACCOUNT }}",
+            token = "${{ secrets.SHINYAPPSIO_TOKEN }}",
+            secret = "${{ secrets.SHINYAPPSIO_SECRET }}",
+            server = "shinyapps.io"
+          )
+          rsconnect::deployApp(
+            appDir = "./${{ github.event.repository.name }}/${{ matrix.directory }}",
+            appFiles = "app.R",
+            appName = rsconnect::generateAppName("${{ env.APP_PREFIX }}_${{ matrix.directory }}_${{ env.APP_SUFFIX }}"),
+            appTitle = "${{ env.APP_PREFIX }}_${{ matrix.directory }}_${{ env.APP_SUFFIX }}",
+            account = "${{ env.SHINYAPPSIO_ACCOUNT }}",
+            upload = TRUE,
+            logLevel = "normal",
+            lint = FALSE,
+            forceUpdate = TRUE
+          )
