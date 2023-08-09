@@ -3,35 +3,7 @@
     "Version": "4.3.0",
     "Repositories": [
       {
-        "Name": "Pharmaverse",
-        "URL": "https://pharmaverse.r-universe.dev"
-      },
-      {
         "Name": "CRAN",
-        "URL": "https://packagemanager.posit.co/cran/latest"
-      },
-      {
-        "Name": "BioC.BioCsoft",
-        "URL": "https://bioconductor.org/packages/3.17/bioc"
-      },
-      {
-        "Name": "BioC.BioCann",
-        "URL": "https://bioconductor.org/packages/3.17/data/annotation"
-      },
-      {
-        "Name": "BioC.BioCexp",
-        "URL": "https://bioconductor.org/packages/3.17/data/experiment"
-      },
-      {
-        "Name": "BioC.BioCworkflows",
-        "URL": "https://bioconductor.org/packages/3.17/workflows"
-      },
-      {
-        "Name": "BioC.BioCbooks",
-        "URL": "https://bioconductor.org/packages/3.17/books"
-      },
-      {
-        "Name": "BioC.CRAN",
         "URL": "https://cloud.r-project.org"
       }
     ]
