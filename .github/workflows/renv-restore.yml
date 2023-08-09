@@ -17,7 +17,7 @@ jobs:
         directory: ["asdf"]
         repository: ["https://pharmaverse.r-universe.dev"]
     env:
-      SHINYAPPSIO_ACCOUNT: genentech
+      SHINYAPPSIO_ACCOUNT: vedha-viyash
       APP_PREFIX: NEST
     steps:
       - name: Set APP_SUFFIX
