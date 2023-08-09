@@ -19,12 +19,15 @@ jobs:
         with:
           path: ${{ github.event.repository.name }}
 
+      - name: Extract R version from lockfile
+        run: printf 'R_VERSION=%s\n' "$(jq --raw-output .R.Version ${{ github.event.repository.name }}/${{ matrix.directory }}/renv.lock)" >> $GITHUB_ENV
+
       - name: Restore renv from cache
         uses: actions/cache@v2
         env:
           CACHE_KEY: renv-${{ runner.arch }}-${{ runner.os }}-${{ env.R_VERSION }}-${{ matrix.directory }}
         with:
-          path: renv/library
+          path: ${{ github.event.repository.name }}/${{ matrix.directory }}/renv/library
           key: ${{ env.CACHE_KEY }}-${{ hashFiles(format('{0}{1}/renv.lock', github.event.repository.name, matrix.directory)) }}
           restore-keys: ${{ env.CACHE_KEY }}-
 
