@@ -55,8 +55,8 @@ jobs:
         run: print(packageVersion('digest'))
 
       - name: Print renv.lock file
-        working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
-        run: cat renv.lock
+        working-directory: ${{ github.event.repository.name }}
+        run: cat ${{ matrix.directory }}/renv.lock
 
       - name: Commit updated renv.lock file
         uses: EndBug/add-and-commit@v7
@@ -64,6 +64,6 @@ jobs:
           author_name: GitHub Actions
           author_email: actions@github.com
           message: "Update renv.lock file for ${{ matrix.directory }}"
-          add: ${{ matrix.directory }}/renv.lock
+          add: ${{ format('{0}/renv.lock', matrix.directory) }}
           cwd: ${{ github.event.repository.name }}
           token: ${{ secrets.GITHUB_TOKEN }}
