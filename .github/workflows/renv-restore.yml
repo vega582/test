@@ -45,6 +45,24 @@ jobs:
         with:
           path: ${{ github.event.repository.name }}
 
+      - name: Overwrite the global Rprofile ✍️
+        run: |
+          cat > /usr/local/lib/R/etc/Rprofile.site <<RPROFILE
+           options(
+            repos = c(
+              Pharmaverse = "${{ matrix.repository }}",
+              CRAN = "https://cloud.r-project.org",
+              BioC = BiocManager::repositories()
+            ),
+            download.file.method = 'libcurl',
+            HTTPUserAgent = sprintf(
+              "R/%s R (%s)",
+              getRversion(),
+              paste(getRversion(), R.version["platform"], R.version["arch"], R.version["os"])
+            )
+          )
+          RPROFILE
+
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
 
