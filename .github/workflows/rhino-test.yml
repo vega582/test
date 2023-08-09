@@ -29,8 +29,8 @@ jobs:
         uses: actions/cache@v2
         env:
           CACHE_KEY: renv-${{ runner.arch }}-${{ runner.os }}-${{ env.R_VERSION }}-${{ matrix.directory }}
-        working-directory: ${{ github.event.repository.name }}
         with:
+          working-directory: ${{ github.event.repository.name }}
           path: ${{ matrix.directory }}/renv/library
           key: ${{ env.CACHE_KEY }}-${{ hashFiles(format('{0}/renv.lock', matrix.directory)) }}
           restore-keys: ${{ env.CACHE_KEY }}-
