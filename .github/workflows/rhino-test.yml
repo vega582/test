@@ -28,7 +28,7 @@ jobs:
       - name: Restore renv from cache
         uses: actions/cache@v2
         env:
-          CACHE_KEY: renv-${{ runner.arch }}-${{ runner.os }}-${{ env.R_VERSION }}-${{ matrix.directory }}
+          CACHE_KEY: arenv-${{ runner.arch }}-${{ runner.os }}-${{ env.R_VERSION }}-${{ matrix.directory }}
         with:
           path: ${{ github.event.repository.name }}/${{ matrix.directory }}/renv/library
           key: ${{ env.CACHE_KEY }}-${{ hashFiles(format('{0}/{1}/renv.lock', github.event.repository.name, matrix.directory)) }}
