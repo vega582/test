@@ -107,23 +107,8 @@ jobs:
           key: ${{ env.CACHE_KEY }}-${{ hashFiles(format('{0}/{1}/renv.lock', github.event.repository.name, matrix.directory)) }}
           restore-keys: ${{ env.CACHE_KEY }}-
 
-      - name: Install app dependencies using renv.lock
-        shell: Rscript {0}
-        if: ${{ env.APP_SUFFIX == 'main' }}
-        working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
-        run: |
-          options(renv.config.cache.symlinks = FALSE)
-          renv::update()
-          renv::snapshot(update = TRUE)
-
-      - name: Print the new renv.lock file for ${{ matrix.directory }}
-        if: ${{ env.APP_SUFFIX == 'main' }}
-        working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
-        run: cat renv.lock
-
       - name: Remove renv
         shell: Rscript {0}
-        if: ${{ env.APP_SUFFIX != 'main' }}
         run: |
           setwd("${{ github.event.repository.name }}/${{ matrix.directory }}")
           remotes::install_version("renv", "1.0.0")
@@ -136,6 +121,20 @@ jobs:
         working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
         run: |
           install.packages(renv::dependencies()$Package)
+
+      - name: Install app dependencies using renv.lock
+        shell: Rscript {0}
+        if: ${{ env.APP_SUFFIX == 'main' }}
+        working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
+        run: |
+          options(renv.config.cache.symlinks = FALSE)
+          renv::init()
+          renv::snapshot(update = TRUE)
+
+      - name: Print the new renv.lock file for ${{ matrix.directory }}
+        if: ${{ env.APP_SUFFIX == 'main' }}
+        working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
+        run: cat renv.lock
 
       - name: Front end test to check if the app works fine
         if: steps.find-cypress.outputs.has-cypress-tests == 'true'
