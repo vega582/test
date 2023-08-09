@@ -20,6 +20,14 @@ jobs:
       SHINYAPPSIO_ACCOUNT: genentech
       APP_PREFIX: NEST
     steps:
+      - name: Set APP_SUFFIX
+        run: |
+          if [ "${{ matrix.repository }}" = "https://insightsengineering.r-universe.dev" ]; then
+            echo "APP_SUFFIX=release" >> $GITHUB_ENV
+          else
+            echo "APP_SUFFIX=main" >> $GITHUB_ENV
+          fi
+
       - name: Checkout repo 🛎
         uses: actions/checkout@v3
         with:
@@ -61,7 +69,7 @@ jobs:
         working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
         run: |
           options(renv.config.cache.symlinks = FALSE)
-          renv::restore(clean = TRUE)
+          renv::restore()
           install.packages(
             renv::dependencies()$Package,
             repos = c(
