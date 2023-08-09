@@ -32,10 +32,9 @@ jobs:
         uses: actions/cache@v2
         env:
           CACHE_KEY: renv-${{ runner.arch }}-${{ runner.os }}-${{ env.R_VERSION }}-${{ matrix.directory }}
-          FILE_HASH: ${{ hashFiles(format('{0}/renv.lock', matrix.directory)) }}
         with:
           path: renv/library
-          key: ${{ env.CACHE_KEY }}-${{ env.FILE_HASH }}
+          key: ${{ env.CACHE_KEY }}-${{ hashFiles(format('{0}/renv.lock', matrix.directory)) }}
           restore-keys: ${{ env.CACHE_KEY }}-
 
       - name: Sync renv with lockfile
