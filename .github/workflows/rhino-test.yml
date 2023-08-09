@@ -6,8 +6,8 @@ jobs:
   main:
     name: Run linters and tests
     runs-on: ubuntu-20.04
-    container:
-      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
+    # container:
+    #   image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
     strategy:
       matrix:
         directory: ["asdf"]
@@ -19,11 +19,11 @@ jobs:
         with:
           path: ${{ github.event.repository.name }}
 
-      - name: Install jq
-        run: sudo apt-get update && sudo apt-get install -y jq
-
+      # - name: Install jq
+      #   run: sudo apt-get update && sudo apt-get install -y jq
       - name: Extract R version from lockfile
-        run: printf 'R_VERSION=%s\n' "$(jq --raw-output .R.Version ${{ github.event.repository.name }}/${{ matrix.directory }}/renv.lock)" >> $GITHUB_ENV
+        run: printf 'R_VERSION=4.3.0\n' >> $GITHUB_ENV
+        # run: printf 'R_VERSION=%s\n' "$(jq --raw-output .R.Version ${{ github.event.repository.name }}/${{ matrix.directory }}/renv.lock)" >> $GITHUB_ENV
 
       - name: Restore renv from cache
         uses: actions/cache@v2
@@ -34,14 +34,9 @@ jobs:
           key: ${{ env.CACHE_KEY }}-${{ hashFiles(format('{0}{1}/renv.lock', github.event.repository.name, matrix.directory)) }}
           restore-keys: ${{ env.CACHE_KEY }}-
 
-      - name: Sync renv with lockfile
-        shell: Rscript {0}
-        working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
-        run: |
-          options(renv.config.cache.symlinks = FALSE)
-          renv::restore(clean = TRUE)
-
-      - name: Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
+      # - name: Sync renv with lockfile
+      #   shell: Rscript {0}
+      #   working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
+      #   run: |
+      #     options(renv.config.cache.symlinks = FALSE)
+      #     renv::restore(clean = TRUE)
