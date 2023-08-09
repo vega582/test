@@ -6,6 +6,9 @@ jobs:
   main:
     name: Run linters and tests
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        directory: ["asdf"]
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -28,7 +31,7 @@ jobs:
       - name: Restore renv from cache
         uses: actions/cache@v2
         env:
-          CACHE_KEY: renv-${{ runner.arch }}-${{ runner.os }}-${{ env.R_VERSION }}
+          CACHE_KEY: renv-${{ runner.arch }}-${{ runner.os }}-${{ env.R_VERSION }}-${{ matrix.directory }}
         with:
           path: renv/library
           key: ${{ env.CACHE_KEY }}-${{ hashFiles('renv.lock') }}
@@ -36,6 +39,7 @@ jobs:
 
       - name: Sync renv with lockfile
         shell: Rscript {0}
+        working-directory: ${{ matrix.directory }}
         run: |
           options(renv.config.cache.symlinks = FALSE)
           renv::restore(clean = TRUE)
