@@ -1,4 +1,4 @@
-name: Rhino Test
+name: Renv Restore
 on: push
 permissions:
   contents: read
