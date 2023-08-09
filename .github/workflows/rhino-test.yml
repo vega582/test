@@ -7,7 +7,7 @@ jobs:
     name: Run linters and tests
     runs-on: ubuntu-20.04
     container:
-      image: rocker/shiny
+      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
     strategy:
       matrix:
         directory: ["asdf"]
