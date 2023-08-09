@@ -30,9 +30,8 @@ jobs:
         env:
           CACHE_KEY: renv-${{ runner.arch }}-${{ runner.os }}-${{ env.R_VERSION }}-${{ matrix.directory }}
         with:
-          working-directory: ${{ github.event.repository.name }}
-          path: ${{ matrix.directory }}/renv/library
-          key: ${{ env.CACHE_KEY }}-${{ hashFiles(format('{0}/renv.lock', matrix.directory)) }}
+          path: ${{ github.event.repository.name }}/${{ matrix.directory }}/renv/library
+          key: ${{ env.CACHE_KEY }}-${{ hashFiles(format('{0}/{1}/renv.lock', github.event.repository.name, matrix.directory)) }}
           restore-keys: ${{ env.CACHE_KEY }}-
 
       # - name: Sync renv with lockfile
