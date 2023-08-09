@@ -1,6 +1,6 @@
 {
   "R": {
-    "Version": "4.3.0",
+    "Version": "4.3.1",
     "Repositories": [
       {
         "Name": "CRAN",
@@ -11,13 +11,14 @@
   "Packages": {
     "digest": {
       "Package": "digest",
-      "Version": "0.5.1",
+      "Version": "0.6.33",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
-        "R"
+        "R",
+        "utils"
       ],
-      "Hash": "cc017e4c65bed6cc0d136d929fe79515"
+      "Hash": "b18a9cf3c003977b0cc49d5e76ebe48d"
     },
     "renv": {
       "Package": "renv",
