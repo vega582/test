@@ -59,11 +59,10 @@ jobs:
         run: cat ${{ matrix.directory }}/renv.lock
 
       - name: Commit updated renv.lock file
-        uses: EndBug/add-and-commit@v7
+        uses: stefanzweifel/git-auto-commit-action@v4
+        continue-on-error: true
         with:
-          author_name: GitHub Actions
-          author_email: actions@github.com
-          message: "Update renv.lock file for ${{ matrix.directory }}"
-          add: ${{ format('{0}/renv.lock', matrix.directory) }}
-          cwd: ${{ github.event.repository.name }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.event.repository.name }}
+          commit_message: "Update renv.lock file for ${{ matrix.directory }}"
+          file_pattern: "${{ matrix.directory }}/renv.lock"
+          commit_user_name: commit-bot
