@@ -19,6 +19,9 @@ jobs:
         with:
           path: ${{ github.event.repository.name }}
 
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
       - name: Extract R version from lockfile
         run: printf 'R_VERSION=%s\n' "$(jq --raw-output .R.Version ${{ github.event.repository.name }}/${{ matrix.directory }}/renv.lock)" >> $GITHUB_ENV
 
