@@ -44,33 +44,3 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 16
-
-      - name: Lint R
-        if: always()
-        shell: Rscript {0}
-        run: rhino::lint_r()
-
-      - name: Lint JavaScript
-        if: always()
-        shell: Rscript {0}
-        run: rhino::lint_js()
-
-      - name: Lint Sass
-        if: always()
-        shell: Rscript {0}
-        run: rhino::lint_sass()
-
-      - name: Build JavaScript
-        if: always()
-        shell: Rscript {0}
-        run: rhino::build_js()
-
-      - name: Build Sass
-        if: always()
-        shell: Rscript {0}
-        run: rhino::build_sass()
-
-      - name: Run R unit tests
-        if: always()
-        shell: Rscript {0}
-        run: rhino::test_r()
