@@ -53,8 +53,12 @@ jobs:
 
       - name: Check global profile
         shell: Rscript {0}
+        working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
         run: |
+          options(renv.config.cache.symlinks = FALSE)
+          renv::restore()
           install.packages('teal')
+          renv::snapshot(update = TRUE)
 
       # - name: Install jq
       #   run: sudo apt-get update && sudo apt-get install -y jq
@@ -93,14 +97,7 @@ jobs:
       #   run: |
       #     options(renv.config.cache.symlinks = FALSE)
       #     renv::restore()
-      #     install.packages(
-      #       renv::dependencies()$Package,
-      #       repos = c(
-      #         Pharmaverse = "${{ matrix.repository }}",
-      #         CRAN = "https://cloud.r-project.org",
-      #         BioC = BiocManager::repositories()
-      #       )
-      #     )
+      #     install.packages(renv::dependencies()$Package)
       #     renv::snapshot(update = TRUE)
 
       # - name: Print the new renv.lock file for ${{ matrix.directory }}
