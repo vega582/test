@@ -43,5 +43,6 @@ jobs:
           renv::status()
 
       - name: Print {digest} version
+        working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
         shell: Rscript {0}
         run: print(packageVersion('digest'))
