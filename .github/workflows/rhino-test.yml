@@ -65,4 +65,4 @@ jobs:
           repository: ${{ github.event.repository.name }}
           commit_message: "Update renv.lock file for ${{ matrix.directory }}"
           file_pattern: "${{ matrix.directory }}/renv.lock"
-          commit_user_name: commit-bot
+          commit_user_name: github-actions
