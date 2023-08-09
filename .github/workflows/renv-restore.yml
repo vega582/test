@@ -3,13 +3,7 @@ name: Deploy Apps 🚀
 
 on:
   push:
-    branches:
-      - main
-    tags:
-      - "*"
   workflow_dispatch:
-  schedule:
-    - cron: "12 3 * * *"
 
 concurrency:
   group: publish-${{ github.event.pull_request.number || github.ref }}
