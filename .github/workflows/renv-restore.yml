@@ -105,7 +105,6 @@ jobs:
         run: |
           options(renv.config.cache.symlinks = FALSE)
           renv::update()
-          renv::restore(clean = TRUE)
           renv::snapshot(update = TRUE)
 
       - name: Print the new renv.lock file for ${{ matrix.directory }}
