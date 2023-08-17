@@ -125,13 +125,11 @@ jobs:
         shell: Rscript {0}
         working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
         run: |
-          install.packages("BiocManager")
           install.packages('remotes')
           remotes::install_version("rsconnect", "0.8.29")
 
       - name: Deploy 🖨 ${{ matrix.directory }} 🎨
         shell: Rscript {0}
-        working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
         run: |
           rsconnect::setAccountInfo(
             name = "${{ env.SHINYAPPSIO_ACCOUNT }}",
@@ -140,7 +138,7 @@ jobs:
             server = "shinyapps.io"
           )
           rsconnect::deployApp(
-            appFiles = "app.R",
+            appFiles = "${{ github.event.repository.name }}/${{ matrix.directory }}/app.R",
             appName = rsconnect::generateAppName("${{ env.APP_PREFIX }}_${{ matrix.directory }}_${{ env.CHANNEL }}"),
             appTitle = "${{ env.APP_PREFIX }}_${{ matrix.directory }}_${{ env.CHANNEL }}",
             account = "${{ env.SHINYAPPSIO_ACCOUNT }}",
