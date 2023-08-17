@@ -125,9 +125,9 @@ jobs:
         shell: Rscript {0}
         working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
         run: |
+          install.packages("BiocManager")
           install.packages('remotes')
           remotes::install_version("rsconnect", "0.8.29")
-          install.packages("BiocManager")
 
       - name: Deploy 🖨 ${{ matrix.directory }} 🎨
         shell: Rscript {0}
