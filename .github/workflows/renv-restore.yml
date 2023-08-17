@@ -17,7 +17,7 @@ jobs:
     name: Publish 🗞
     runs-on: ubuntu-latest
     container:
-      image: rocker/shiny
+      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
     strategy:
       fail-fast: false
       matrix:
