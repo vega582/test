@@ -104,6 +104,7 @@ jobs:
         working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
         run: |
           options(renv.config.cache.symlinks = FALSE)
+          renv::restore()
           renv::update()
           renv::snapshot(update = TRUE)
 
