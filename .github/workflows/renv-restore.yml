@@ -123,7 +123,6 @@ jobs:
 
       - name: Install deploy R package dependencies
         shell: Rscript {0}
-        working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
         run: |
           install.packages('remotes')
           remotes::install_version("rsconnect", "0.8.29")
