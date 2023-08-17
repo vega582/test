@@ -107,6 +107,8 @@ jobs:
           renv::restore()
           renv::update()
           renv::snapshot(update = TRUE)
+          install.packages('remotes')
+          remotes::install_version("rsconnect", "0.8.29")
 
       - name: Print the new renv.lock file for ${{ matrix.directory }}
         working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
@@ -122,15 +124,10 @@ jobs:
           wait-on-timeout: 500
           project: ../tests
 
-      - name: Install deploy R package dependencies
-        shell: Rscript {0}
-        run: |
-          install.packages('remotes')
-          remotes::install_version("rsconnect", "0.8.29")
-
       - name: Deploy 🖨 ${{ matrix.directory }} 🎨
         shell: Rscript {0}
         run: |
+          setwd("${{ github.event.repository.name }}/${{ matrix.directory }}")
           rsconnect::setAccountInfo(
             name = "${{ env.SHINYAPPSIO_ACCOUNT }}",
             token = "${{ secrets.SHINYAPPSIO_TOKEN }}",
@@ -138,7 +135,7 @@ jobs:
             server = "shinyapps.io"
           )
           rsconnect::deployApp(
-            appFiles = "${{ github.event.repository.name }}/${{ matrix.directory }}/app.R",
+            appFiles = "app.R",
             appName = rsconnect::generateAppName("${{ env.APP_PREFIX }}_${{ matrix.directory }}_${{ env.CHANNEL }}"),
             appTitle = "${{ env.APP_PREFIX }}_${{ matrix.directory }}_${{ env.CHANNEL }}",
             account = "${{ env.SHINYAPPSIO_ACCOUNT }}",
