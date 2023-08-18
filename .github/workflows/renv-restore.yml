@@ -18,11 +18,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Inspect contents of the renv library before cache
-        shell: bash
-        run: |
-          ls ${{ matrix.directory }}/renv/library
-
       - name: Restore renv from cache
         uses: actions/cache@v2
         env:
