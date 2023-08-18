@@ -1,4 +1,4 @@
-library(shiny)
+library(teal)
 
 ui <- "Test"
 
