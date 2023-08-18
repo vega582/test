@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: rocker/shiny
+    strategy:
+      fail-fast: false
       matrix:
         directory: ["simple-shiny"]
     steps:
