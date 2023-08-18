@@ -17,24 +17,26 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+        with:
+          path: ${{ github.event.repository.name }}
 
       - name: Restore renv from cache
         uses: actions/cache@v2
         env:
           CACHE_KEY: renv-${{ runner.arch }}-${{ runner.os }}-${{ matrix.directory }}
         with:
-          path: ${{ matrix.directory }}/renv/library
-          key: ${{ env.CACHE_KEY }}-${{ hashFiles(format('{0}/renv.lock', matrix.directory)) }}
+          path: ${{ github.event.repository.name }}/${{ matrix.directory }}/renv/library
+          key: ${{ env.CACHE_KEY }}-${{ hashFiles(format('{0}{1}/renv.lock', github.event.repository.name, matrix.directory)) }}
           restore-keys: ${{ env.CACHE_KEY }}-
 
       - name: Inspect contents of the renv library after cache
         shell: bash
         run: |
-          ls ${{ matrix.directory }}/renv/library/R-4.3/x86_64-pc-linux-gnu
+          ls ${{ github.event.repository.name }}/${{ matrix.directory }}/renv/library/R-4.3/x86_64-pc-linux-gnu
 
       - name: Sync renv with lockfile
         shell: Rscript {0}
-        working-directory: ${{ matrix.directory }}
+        working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
         run: |
           options(renv.config.cache.symlinks = FALSE)
           renv::restore(clean = TRUE)
