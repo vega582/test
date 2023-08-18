@@ -8,6 +8,7 @@ on:
 env:
   SHINYAPPSIO_ACCOUNT: vedha-viyash
   APP_PREFIX: NEST
+  GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   deploy:
@@ -16,46 +17,9 @@ jobs:
         shell: bash
     name: Publish 🗞
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
-    strategy:
-      fail-fast: false
-      matrix:
-        directory: ["basic-teal"]
-        repository:
-          [
-            "https://insightsengineering.r-universe.dev",
-            "https://pharmaverse.r-universe.dev",
-          ]
     steps:
-      - name: Set CHANNEL
+      - name: Test
+        shell: Rscript {0}
         run: |
-          if [ "${{ matrix.repository }}" = "https://insightsengineering.r-universe.dev" ]; then
-            echo "CHANNEL=stable" >> $GITHUB_ENV
-            echo "CODE_BRANCH=main" >> $GITHUB_ENV
-          else
-            echo "CHANNEL=release" >> $GITHUB_ENV
-            echo "CODE_BRANCH=dev" >> $GITHUB_ENV
-          fi
-
-      - name: Checkout repo 🛎
-        uses: actions/checkout@v3
-        with:
-          path: ${{ github.event.repository.name }}
-          ref:
-
-      - name: Update the file
-        shell: bash
-        working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}/js
-        run: |
-          echo "some string" >> test-${{ env.CODE_BRANCH }}.txt
-          cat test-${{ env.CODE_BRANCH }}.txt
-
-      - name: Commit updated renv.lock file
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          repository: ${{ github.event.repository.name }}
-          branch: main # TODO: switch to the release branch before merging.
-          commit_message: "[bot] Update test file for ${{ matrix.repository }} app"
-          file_pattern: "test-${{ env.CODE_BRANCH }}.txt"
-          commit_user_name: insights-engineering-bot
+          print("${{ env.GITHUB_PAT }}")
+          Sys.getenv("GITHUB_PAT")
