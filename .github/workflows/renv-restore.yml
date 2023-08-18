@@ -48,7 +48,8 @@ jobs:
         shell: bash
         working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}/js
         run: |
-          echo "some string" >> ${{ env.CODE_BRANCH }}.txt
+          echo "some string" >> test-${{ env.CODE_BRANCH }}.txt
+          cat test-${{ env.CODE_BRANCH }}.txt
 
       - name: Commit updated renv.lock file
         uses: stefanzweifel/git-auto-commit-action@v4
@@ -56,5 +57,5 @@ jobs:
           repository: ${{ github.event.repository.name }}
           branch: main # TODO: switch to the release branch before merging.
           commit_message: "[bot] Update test file for ${{ matrix.repository }} app"
-          file_pattern: "${{ env.CODE_BRANCH }}.txt"
+          file_pattern: "test-${{ env.CODE_BRANCH }}.txt"
           commit_user_name: insights-engineering-bot
