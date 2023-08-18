@@ -29,6 +29,7 @@ jobs:
 
       - name: Sync renv with lockfile
         shell: Rscript {0}
+        working-directory: ${{ matrix.directory }}
         run: |
           options(renv.config.cache.symlinks = FALSE)
           renv::restore(clean = TRUE)
