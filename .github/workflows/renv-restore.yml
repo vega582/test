@@ -17,9 +17,32 @@ jobs:
         shell: bash
     name: Publish 🗞
     runs-on: ubuntu-latest
+    container:
+      image: rocker/shiny
+      matrix:
+        directory: ["simple-shiny"]
     steps:
-      - name: Test
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v3
+        with:
+          path: ${{ github.event.repository.name }}
+
+      - name: Restore renv from cache
+        uses: actions/cache@v2
+        env:
+          CACHE_KEY: renv-${{ runner.arch }}-${{ runner.os }}-${{ env.R_VERSION }}-${{ matrix.directory }}-${{ matrix.channel }}
+        with:
+          path: ${{ github.event.repository.name }}/${{ matrix.directory }}/renv/library
+          key: ${{ env.CACHE_KEY }}-${{ hashFiles(format('{0}/{1}/renv.lock', github.event.repository.name, matrix.directory)) }}
+          restore-keys: ${{ env.CACHE_KEY }}-
+
+      - name: Install R packages using renv and update the renv snapshot
         shell: Rscript {0}
+        working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
         run: |
-          print("${{ env.GITHUB_PAT }}")
-          Sys.getenv("GITHUB_PAT")
+          options(renv.config.cache.symlinks = FALSE)
+          renv::restore(clean = TRUE)
+
+      - name: Print the new renv.lock file for ${{ matrix.directory }}
+        working-directory: ${{ github.event.repository.name }}/${{ matrix.directory }}
+        run: cat renv.lock
