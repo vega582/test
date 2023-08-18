@@ -33,6 +33,17 @@
     ]
   },
   "Packages": {
+    "teal.transform": {
+      "Package": "teal.transform",
+      "Version": "0.4.0",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "insightsengineering",
+      "RemoteRepo": "teal.transform",
+      "RemoteRef": "v0.4.0",
+      "RemoteSha": "5e7acf73f9023459a39d1f88279ed72005521219"
+    },
     "R6": {
       "Package": "R6",
       "Version": "2.5.1",
