@@ -30,7 +30,7 @@ jobs:
       - name: Inspect contents of the renv library after cache
         shell: bash
         run: |
-          ls ${{ matrix.directory }}/renv/library
+          ls ${{ matrix.directory }}/renv/library/R-4.3/
 
       - name: Sync renv with lockfile
         shell: Rscript {0}
