@@ -33,17 +33,6 @@
     ]
   },
   "Packages": {
-    "teal.data": {
-      "Package": "teal.data",
-      "Version": "0.3.0",
-      "Source": "GitHub",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteUsername": "insightsengineering",
-      "RemoteRepo": "teal.data",
-      "RemoteRef": "v0.3.0",
-      "RemoteSha": "f437944ffd6e06426d8336420cf80596d94a2798"
-    },
     "R6": {
       "Package": "R6",
       "Version": "2.5.1",
