@@ -24,7 +24,6 @@ jobs:
           echo "Something" >> test.txt
 
       - name: Commit updated renv.lock file
-        if: ${{ env.CHANNEL == 'stable' }}
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           branch: main
