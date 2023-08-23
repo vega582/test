@@ -16,6 +16,7 @@ jobs:
       - name: Create and commit file
         run: |
           echo "Something" > test.txt
+          git config --global --add safe.directory /__w/test/test
           ls
           pwd
           git status
