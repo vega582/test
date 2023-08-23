@@ -2,33 +2,20 @@ name: Commit test
 on: push
 permissions:
   contents: write
+
 jobs:
-  main:
-    name: Restore renv from cache
+  create_commit:
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
-    strategy:
-      fail-fast: false
-      matrix:
-        directory: ["simple-shiny"]
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-    permissions:
-      contents: write
+
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Create a file
-        shell: bash
+      - name: Create and commit file
         run: |
-          echo "Something" >> test.txt
-
-      - name: Commit updated renv.lock file
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          branch: main
-          commit_message: "[bot] test commit"
-          file_pattern: "test.txt"
-          commit_user_name: test-bot
+          echo "Something" > test.txt
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add test.txt
+          git commit -m "Add test.txt file"
+          git push origin main
