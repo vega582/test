@@ -16,10 +16,9 @@ jobs:
       - name: Create and commit file
         run: |
           echo "Something" > test.txt
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
           git config --global --add safe.directory /__w/test/test
-          ls
-          pwd
-          git status
           git add test.txt
           git commit -m "Add test.txt file"
           git push origin main
