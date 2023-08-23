@@ -6,6 +6,8 @@ permissions:
 jobs:
   create_commit:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
 
     steps:
       - name: Checkout repository
