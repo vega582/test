@@ -16,8 +16,9 @@ jobs:
       - name: Create and commit file
         run: |
           echo "Something" > test.txt
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          ls
+          pwd
+          git status
           git add test.txt
           git commit -m "Add test.txt file"
           git push origin main
