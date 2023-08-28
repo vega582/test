@@ -89,16 +89,15 @@ jobs:
         working-directory: ${{ matrix.directory }}
         run: |
           rsconnect::setAccountInfo(
-            name = "${{ env.SHINYAPPSIO_ACCOUNT }}",
+            name = "vedha-viyash",
             token = "${{ secrets.SHINYAPPSIO_TOKEN }}",
             secret = "${{ secrets.SHINYAPPSIO_SECRET }}",
             server = "shinyapps.io"
           )
           rsconnect::deployApp(
-            appFiles = "app.R",
-            appName = rsconnect::generateAppName("${{ env.APP_PREFIX }}_${{ matrix.directory }}_${{ matrix.channel }}"),
-            appTitle = "${{ env.APP_PREFIX }}_${{ matrix.directory }}_${{ matrix.channel }}",
-            account = "${{ env.SHINYAPPSIO_ACCOUNT }}",
+            appName = rsconnect::generateAppName("python-test-ci"),
+            appTitle = "python-test-ci",
+            account = "vedha-viyash",
             upload = TRUE,
             logLevel = "normal",
             lint = FALSE,
