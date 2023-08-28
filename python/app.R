@@ -16,9 +16,15 @@ python_path <- Sys.getenv("PYTHON_PATH")
 if (python_path == "") {
   python_path <- NULL
 }
+print("Installing python")
+reticulate::install_python(version = "3.7")
+print("Creating Venv")
 reticulate::virtualenv_create(envname = virtualenv_dir, python = python_path)
+print("Installing Venv")
 reticulate::virtualenv_install(virtualenv_dir, packages = python_dependencies, ignore_installed = TRUE)
+print("Using Venv")
 reticulate::use_virtualenv(virtualenv_dir, required = TRUE)
+print("All done!")
 
 iris_raw <- cbind(id = 1:nrow(iris), iris)
 
