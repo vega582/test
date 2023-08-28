@@ -9,19 +9,16 @@ library(ggpmisc)
 library(sparkline)
 
 options(shiny.useragg = FALSE)
-Sys.setenv(PYTHON_PATH = "python3")
-Sys.setenv(VIRTUALENV_NAME = "example_env_name") # Installs into default shiny virtualenvs dir
-Sys.setenv(RETICULATE_PYTHON = paste0("/home/shiny/.virtualenvs/", "example_env_name", "/bin/python"))
 
 python_dependencies <- c("pip", "numpy", "pandas")
 virtualenv_dir <- Sys.getenv("VIRTUALENV_NAME", "example_env_name")
-python_path <- Sys.getenv("PYTHON_PATH", "python3")
+python_path <- Sys.getenv("PYTHON_PATH")
 if (python_path == "") {
   python_path <- NULL
 }
 reticulate::virtualenv_create(envname = virtualenv_dir, python = python_path)
 reticulate::virtualenv_install(virtualenv_dir, packages = python_dependencies, ignore_installed = TRUE)
-reticulate::use_virtualenv(virtualenv_dir, required = T)
+reticulate::use_virtualenv(virtualenv_dir, required = TRUE)
 
 iris_raw <- cbind(id = 1:nrow(iris), iris)
 

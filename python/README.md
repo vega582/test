@@ -6,16 +6,11 @@
 ### Run the app yourself
 
     source("https://raw.github.com/insightsengineering/teal.gallery/main/_internal/utils/sourceme.R")
-
-    # Run the app after installing all the stable versions of teal dependencies from https://insightsengineering.r-universe.dev
-    restore_and_run("python", package_repo = "https://insightsengineering.r-universe.dev")
-
-    # Run the app after installing all the beta versions of teal dependencies from https://pharmaverse.r-universe.dev
-    restore_and_run("python", package_repo = "https://pharmaverse.r-universe.dev")
+    restore_and_run("python")
 
 ### View the deployed app
 
-Deployed app: <https://genentech.shinyapps.io/NEST_python_stable>
+Deployed app: <https://genentech.shinyapps.io/NEST_python_main>
 
 ### Preview the app
 
