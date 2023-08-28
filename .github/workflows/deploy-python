@@ -1,7 +1,8 @@
 ---
-name: Deploy Apps 🚀
+name: Deploy Python 🚀
 
 on:
+  push:
   workflow_dispatch:
 
 env:
@@ -21,14 +22,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        directory: ["basic-teal", "python"]
+        directory: ["python"]
         channel: ["stable"] # TODO: add deval to the channel
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v3
-
-      - name: Install jq
-        run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Set channel related constants
         run: |
@@ -38,41 +36,16 @@ jobs:
             echo "BRANCH_NAME=main" >> $GITHUB_ENV # TODO: Change the branch name to deval
           fi
 
-      - name: Extract R version from lockfile
-        run: printf 'R_VERSION=%s\n' "$(jq --raw-output .R.Version ${{ matrix.directory }}/renv.lock)" >> $GITHUB_ENV
-
-      - name: Check if cypress test exists
-        id: find-cypress
-        run: |
-          if [ -d ${{ matrix.directory }}/tests/cypress ]; then
-            echo "has-cypress-tests=true" >> $GITHUB_OUTPUT
-          else
-            echo "Skipping frontend tests because cypress directory does not exist."
-            echo "has-cypress-tests=false" >> $GITHUB_OUTPUT
-          fi
-
       - name: Setup system dependencies for cypress and python app
         if: steps.find-cypress.outputs.has-cypress-tests == 'true'
         run: >
           apt-get update && apt-get install --yes
           libgtk2.0-0 libgbm-dev libnotify-dev libgconf-2-4 xvfb python3.10-venv
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        if: steps.find-cypress.outputs.has-cypress-tests == 'true'
-        with:
-          node-version: 16
-
-      - name: Setup npm packages
-        if: steps.find-cypress.outputs.has-cypress-tests == 'true'
-        working-directory: ${{ matrix.directory }}/js
-        run: |
-          npm i
-
       - name: Restore renv from cache
         uses: actions/cache@v2
         env:
-          CACHE_KEY: renv-${{ runner.arch }}-${{ runner.os }}-${{ env.R_VERSION }}-${{ matrix.directory }}-${{ matrix.channel }}
+          CACHE_KEY: renv-${{ runner.arch }}-${{ runner.os }}-${{ matrix.directory }}-${{ matrix.channel }}
         with:
           path: ${{ matrix.directory }}/renv/library
           key: ${{ env.CACHE_KEY }}-${{ hashFiles(format('{0}/renv.lock', matrix.directory)) }}
@@ -105,17 +78,6 @@ jobs:
         working-directory: ${{ matrix.directory }}
         run: cat renv.lock
 
-      - name: Front end test to check if the app works fine
-        if: steps.find-cypress.outputs.has-cypress-tests == 'true'
-        continue-on-error: true
-        uses: cypress-io/github-action@v2
-        with:
-          working-directory: ${{ matrix.directory }}/js
-          start: npm run run-app
-          wait-on: "http://localhost:3333"
-          wait-on-timeout: 500
-          project: ../tests
-
       - name: Install deploy R package dependencies
         shell: Rscript {0}
         working-directory: ${{ matrix.directory }}
@@ -143,18 +105,3 @@ jobs:
             lint = FALSE,
             forceUpdate = TRUE
           )
-
-      - name: Commit updated renv.lock file
-        run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-          git config --global --add safe.directory /__w/test/test
-          git checkout ${{ env.BRANCH_NAME }}
-          git pull
-          if [ -n "$(git diff --staged)" ]; then
-            git add ${{ matrix.directory }}/renv.lock
-            git commit -m "[skip deploy] Update renv.lock file for ${{ matrix.directory }} app"
-            git push origin ${{ env.BRANCH_NAME }}
-          else
-            echo "renv.lock was not updated. Nothing to commit.";
-          fi
