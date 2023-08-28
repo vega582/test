@@ -146,13 +146,7 @@ jobs:
             forceUpdate = TRUE
           )
 
-      - name: Check for changes in renv.lock
-        id: check_renv_changes
-        run: |
-          git diff --exit-code -- renv.lock || echo "renv.lock has changed"
-
       - name: Commit updated renv.lock file
-        if: steps.check_renv_changes.outputs.return-code == '0'
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
