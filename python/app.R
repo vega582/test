@@ -12,7 +12,7 @@ options(shiny.useragg = FALSE)
 
 python_dependencies <- c("pip", "numpy", "pandas")
 virtualenv_dir <- Sys.getenv("VIRTUALENV_NAME", "example_env_name")
-python_path <- Sys.getenv("PYTHON_PATH")
+python_path <- Sys.getenv("PYTHON_PATH", "python3")
 if (python_path == "") {
   python_path <- NULL
 }
