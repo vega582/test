@@ -11,11 +11,9 @@ library(sparkline)
 options(shiny.useragg = FALSE)
 
 python_dependencies <- c("pip", "numpy", "pandas")
-virtualenv_dir <- Sys.getenv("VIRTUALENV_NAME", "example_env_name")
+virtualenv_dir <- Sys.getenv("VIRTUALENV_NAME")
 python_path <- Sys.getenv("PYTHON_PATH")
-if (python_path == "") {
-  python_path <- NULL
-}
+
 reticulate::virtualenv_create(envname = virtualenv_dir, python = python_path)
 reticulate::virtualenv_install(virtualenv_dir, packages = python_dependencies, ignore_installed = TRUE)
 reticulate::use_virtualenv(virtualenv_dir, required = TRUE)
