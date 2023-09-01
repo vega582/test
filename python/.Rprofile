@@ -14,7 +14,7 @@ if (Sys.info()[["user"]] == "shiny") {
   Sys.setenv(PYTHON_PATH = "python3")
   Sys.setenv(VIRTUALENV_NAME = VIRTUALENV_NAME) # Installs into default shiny virtualenvs dir
   Sys.setenv(RETICULATE_PYTHON = paste0("/home/shiny/.virtualenvs/", VIRTUALENV_NAME, "/bin/python"))
-  reticulate::install_python(version = "3.8")
+  # reticulate::install_python(version = "3.8")
 } else {
   # Running locally
   options(shiny.port = 7450)
