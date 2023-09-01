@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        directory: ["python"]
+        directory: ["python", "shiny-reticulate"]
         channel: ["stable"]
     steps:
       - name: Checkout repo 🛎
