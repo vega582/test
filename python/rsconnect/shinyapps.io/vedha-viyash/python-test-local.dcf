@@ -1,0 +1,10 @@
+name: python-test-local
+title: python-test-local
+username: vedha-viyash
+account: vedha-viyash
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 9694850
+bundleId: 7616127
+url: https://vedha-viyash.shinyapps.io/python-test-local/
+version: 1
