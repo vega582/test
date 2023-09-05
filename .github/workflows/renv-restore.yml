@@ -108,6 +108,7 @@ jobs:
           start: npm run test-e2e
           wait-on: "http://localhost:3333"
           wait-on-timeout: 500
+          project: ../tests
 
       - name: Install deploy R package dependencies
         shell: Rscript {0}
