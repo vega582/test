@@ -61,7 +61,7 @@ jobs:
         if: steps.find-cypress.outputs.has-cypress-tests == 'true'
         working-directory: ${{ matrix.directory }}/js
         run: |
-          npm i
+          npm i --save-dev
 
       - name: Restore renv from cache
         uses: actions/cache@v3
