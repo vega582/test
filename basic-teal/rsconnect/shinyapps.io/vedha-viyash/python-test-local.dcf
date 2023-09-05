@@ -1,0 +1,12 @@
+name: python-test-local
+title: python-test-local
+username:
+account: vedha-viyash
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 9694850
+bundleId: 7625545
+url: https://vedha-viyash.shinyapps.io/python-test-local/
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .Rprofile|README.html|README.md|renv.lock|tests/cypress/e2e/app.cy.js|tests/cypress/videos/app.cy.js.mp4|tests/cypress.config.js|js

@@ -22,8 +22,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        directory: ["python"]
-        channel: ["stable"]
+        directory: ["basic-teal"]
+        channel: ["stable", "dev"]
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v3
@@ -47,18 +47,9 @@ jobs:
           fi
 
       - name: Setup system dependencies for cypress and python app
-        run: |
-          sudo apt-get update
-          sudo apt-get install --yes \
-            libgtk2.0-0 \
-            libgbm-dev \
-            libnotify-dev \
-            libgconf-2-4 \
-            xvfb \
-            software-properties-common
-          sudo add-apt-repository ppa:deadsnakes/ppa
-          sudo apt-get update
-          sudo apt-get install --yes python3.8 python3.8-dev python3.8-venv
+        run: >
+          apt-get update && apt-get install --yes
+          libgtk2.0-0 libgbm-dev libnotify-dev libgconf-2-4 xvfb python3.10-venv
 
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -114,10 +105,9 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           working-directory: ${{ matrix.directory }}/js
-          start: npm run run-app
+          start: npm run test-e2e
           wait-on: "http://localhost:3333"
           wait-on-timeout: 500
-          project: ../tests
 
       - name: Install deploy R package dependencies
         shell: Rscript {0}
@@ -137,7 +127,7 @@ jobs:
             server = "shinyapps.io"
           )
           rsconnect::deployApp(
-            appFiles = c("app.R", ".Rprofile", list.files("www", full.names = TRUE)),
+            appFiles = c("app.R", list.files("www", full.names = TRUE)),
             appName = rsconnect::generateAppName("${{ env.APP_PREFIX }}_${{ matrix.directory }}_${{ matrix.channel }}"),
             appTitle = "${{ env.APP_PREFIX }}_${{ matrix.directory }}_${{ matrix.channel }}",
             account = "${{ env.SHINYAPPSIO_ACCOUNT }}",
@@ -151,9 +141,11 @@ jobs:
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git config --global --add safe.directory /__w/test/test
+          git config --global --add safe.directory /__w/teal.gallery/teal.gallery
           git fetch
+          git stash
           git checkout ${{ env.BRANCH_NAME }}
+          git stash apply
           git pull
           if [ -n "$(git diff --staged)" ]; then
             git add ${{ matrix.directory }}/renv.lock
