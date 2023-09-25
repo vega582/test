@@ -1,15 +1,10 @@
 ---
 name: Deploy Apps 🚀
-
-on:
-  push:
-  workflow_dispatch:
-
+on: push
+permissions:
+  contents: read
 env:
   SHINYAPPSIO_ACCOUNT: vedha-viyash
-  APP_PREFIX: NEST
-  GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
   deploy:
     defaults:
@@ -31,9 +26,9 @@ jobs:
       - name: Set channel related constants
         run: |
           if [ "${{ matrix.channel }}" = "stable" ]; then
-            echo "BRANCH_NAME=main" >> $GITHUB_ENV # TODO: Change the branch name to main
+            echo "BRANCH_NAME=deploy-apps@main" >> $GITHUB_ENV # TODO: Change the branch name to main
           else
-            echo "BRANCH_NAME=dev" >> $GITHUB_ENV # TODO: Change the branch name to deval
+            echo "BRANCH_NAME=deploy-apps@dev" >> $GITHUB_ENV # TODO: Change the branch name to deval
           fi
 
       - name: Check if cypress test exists
@@ -61,12 +56,12 @@ jobs:
         if: steps.find-cypress.outputs.has-cypress-tests == 'true'
         working-directory: ${{ matrix.directory }}/js
         run: |
-          npm i --save-dev
+          npm i
 
       - name: Restore renv from cache
         uses: actions/cache@v3
         env:
-          CACHE_KEY: renv-${{ runner.arch }}-${{ runner.os }}-${{ matrix.directory }}-${{ matrix.channel }}-
+          CACHE_KEY: renv-${{ runner.arch }}-${{ runner.os }}-${{ matrix.directory }}-${{ matrix.channel }}
         with:
           path: ${{ matrix.directory }}/renv/library
           key: ${{ env.CACHE_KEY }}-${{ hashFiles(format('{0}/renv.lock', matrix.directory)) }}
@@ -77,7 +72,7 @@ jobs:
         run: |
           setwd("${{ matrix.directory }}")
           lockfile <- renv::lockfile_read()
-          pkg_name_structure <- "%s/%s@*release"
+          pkg_name_structure <- ifelse("${{ matrix.channel }}" == "stable", "%s/%s@*release", "%s/%s")
           for (package in lockfile$Packages) {
               if (package$Source == "GitHub") {
                   renv::record(sprintf(pkg_name_structure, package$RemoteUsername, package$Package))
@@ -104,11 +99,11 @@ jobs:
         continue-on-error: true
         uses: cypress-io/github-action@v6
         with:
+          build: npm install cypress --save-dev
           working-directory: ${{ matrix.directory }}/js
-          start: npm run test-e2e
+          start: npm run run-app
           wait-on: "http://localhost:3333"
           wait-on-timeout: 500
-          project: ../tests
 
       - name: Install deploy R package dependencies
         shell: Rscript {0}
@@ -118,7 +113,6 @@ jobs:
 
       - name: Deploy 🖨 ${{ matrix.directory }} 🎨
         shell: Rscript {0}
-        continue-on-error: true
         working-directory: ${{ matrix.directory }}
         run: |
           rsconnect::setAccountInfo(
@@ -142,7 +136,7 @@ jobs:
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git config --global --add safe.directory /__w/test/test/test/test
+          git config --global --add safe.directory /__w/teal.gallery/teal.gallery
           git fetch
           git stash
           git checkout ${{ env.BRANCH_NAME }}
