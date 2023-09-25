@@ -44,7 +44,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           working-directory: ${{ matrix.directory }}/js
-          start: npm run run-app
+          start: npm run run-cypress
           wait-on: "http://localhost:3333"
           wait-on-timeout: 500
           project: ../tests
