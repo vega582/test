@@ -97,13 +97,14 @@ jobs:
       - name: Front end test to check if the app works fine
         if: steps.find-cypress.outputs.has-cypress-tests == 'true'
         continue-on-error: true
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v5
         with:
           build: npm install cypress --save-dev
           working-directory: ${{ matrix.directory }}/js
           start: npm run run-app
           wait-on: "http://localhost:3333"
           wait-on-timeout: 500
+          project: ../tests
 
       - name: Install deploy R package dependencies
         shell: Rscript {0}
