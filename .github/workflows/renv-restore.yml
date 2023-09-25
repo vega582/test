@@ -29,14 +29,12 @@ jobs:
           node-version: 16
 
       - name: Setup npm packages
-        if: steps.find-cypress.outputs.has-cypress-tests == 'true'
         working-directory: ${{ matrix.directory }}/js
         run: |
           npm i --save-dev
           ln -s node_modules ../tests/node_modules
 
       - name: Front end test to check if the app works fine
-        if: steps.find-cypress.outputs.has-cypress-tests == 'true'
         continue-on-error: true
         uses: cypress-io/github-action@v6
         with:
