@@ -38,6 +38,6 @@ jobs:
         with:
           working-directory: ${{ matrix.directory }}/tests
           build: npm install --save-dev
-          start: npm run run-cypress
+          start: npm run run-app
           wait-on: "http://localhost:3333"
           wait-on-timeout: 500
