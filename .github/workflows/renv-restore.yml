@@ -36,13 +36,20 @@ jobs:
       - name: Setup npm packages
         working-directory: ${{ matrix.directory }}/js
         run: |
-          npm install --save-dev
+          npm ci
+          npx cypress verify
+          npx cypress info
+          npx cypress version
+          npx cypress version --component package
+          npx cypress version --component binary
+          npx cypress version --component electron
+          npx cypress version --component node
 
       - name: Front end test to check if the app works fine
         uses: cypress-io/github-action@v6
         with:
-          working-directory: ${{ matrix.directory }}/tests
+          working-directory: ${{ matrix.directory }}/js
           start: npm run run-cypress
           wait-on: "http://localhost:3333"
           wait-on-timeout: 500
-          project: .
+          project: ../tests
