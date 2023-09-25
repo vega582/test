@@ -38,13 +38,4 @@ jobs:
         run: |
           npm i --save-dev
           ln -s node_modules ../tests/node_modules
-
-      - name: Front end test to check if the app works fine
-        continue-on-error: true
-        uses: cypress-io/github-action@v6
-        with:
-          working-directory: ${{ matrix.directory }}/js
-          start: npm run run-cypress
-          wait-on: "http://localhost:3333"
-          wait-on-timeout: 500
-          project: ../tests
+          npm run run-cypress
