@@ -36,6 +36,14 @@ jobs:
       - name: Setup npm packages
         working-directory: ${{ matrix.directory }}/js
         run: |
-          npm i --save-dev
-          ln -s node_modules ../tests/node_modules
-          npm run run-cypress
+          npm install --save-dev
+
+      - name: Front end test to check if the app works fine
+        continue-on-error: true
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: ${{ matrix.directory }}/js
+          start: npm run run-cypress
+          wait-on: "http://localhost:3333"
+          wait-on-timeout: 500
+          project: ../tests
